@@ -9,11 +9,13 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   async function handleUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
 
+    setUploading(true);
     const form = new FormData();
     form.append("file", file);
     setError("");
@@ -27,6 +29,8 @@ export default function App() {
       setSchema(data.schema);
     } catch {
       setError("Failed to connect to backend server.");
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -61,7 +65,8 @@ export default function App() {
       {/* Upload Section */}
       <div style={{ padding: 16, border: "1px dashed #ccc", borderRadius: 8, marginBottom: 20 }}>
         <h3>1. Upload Dataset (.csv)</h3>
-        <input type="file" accept=".csv" onChange={handleUpload} />
+        <input type="file" accept=".csv" onChange={handleUpload} disabled={uploading} />
+        {uploading && <p style={{ color: "#0070f3", marginTop: 8 }}>Uploading and parsing schema...</p>}
       </div>
 
       {/* Schema Display */}
@@ -83,17 +88,35 @@ export default function App() {
               style={{ flex: 1, padding: 10, fontSize: 16, borderRadius: 4, border: "1px solid #ccc" }}
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleAsk()}
+              onKeyDown={(e) => e.key === "Enter" && !loading && handleAsk()}
               placeholder="e.g. List top 5 departments by average salary"
+              disabled={loading}
             />
             <button
               onClick={handleAsk}
               disabled={loading || !question}
-              style={{ padding: "10px 20px", fontSize: 16, cursor: "pointer" }}
+              style={{ padding: "10px 20px", fontSize: 16, cursor: loading ? "not-allowed" : "pointer" }}
             >
               {loading ? "Thinking..." : "Ask"}
             </button>
           </div>
+        </div>
+      )}
+
+      {/* 🚀 Visual Loading Feedback State */}
+      {loading && (
+        <div
+          style={{
+            padding: 16,
+            marginBottom: 20,
+            background: "#eef6ff",
+            borderLeft: "4px solid #0070f3",
+            borderRadius: 4,
+            color: "#0051a8",
+            fontWeight: "500",
+          }}
+        >
+          🤖 Analyzing schema & generating SQL via Gemini AI...
         </div>
       )}
 
