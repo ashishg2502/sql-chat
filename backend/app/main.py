@@ -71,12 +71,12 @@ def ask(req: AskRequest):
         raise HTTPException(status_code=404, detail="Dataset not found. Please upload again.")
 
     schema = get_schema(conn)
+
     messages = [
-        {
-            "role": "user",
-            "content": f"Database Schema:\n{schema}\n\nQuestion: {req.question}",
-        }
-    ]
+    {
+        "role": "user",
+        "content": f"Given the database schema, generate ONLY a valid executable SQL query (no markdown formatting, no explanations).\n\nDatabase Schema:\n{schema}\n\nQuestion: {req.question}",
+    }]
 
     last_error = None
 
