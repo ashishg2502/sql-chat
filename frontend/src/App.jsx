@@ -116,7 +116,7 @@ export default function App() {
             fontWeight: "500",
           }}
         >
-          🤖 Analyzing schema & generating SQL via Gemini AI...
+          🤖 Analyzing schema & generating SQL...
         </div>
       )}
 
