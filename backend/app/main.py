@@ -31,6 +31,9 @@ class AskRequest(BaseModel):
     db_id: str
     question: str = Field(min_length=3, max_length=500)
 
+@app.get("/")
+def read_root():
+    return {"status": "ok", "message": "Backend is warm!"}
 
 @app.get("/health")
 def health():
